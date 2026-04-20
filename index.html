@@ -17,12 +17,28 @@
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.5;min-height:100vh}
 body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 43px,rgba(255,107,53,.015) 43px,rgba(255,107,53,.015) 44px),repeating-linear-gradient(90deg,transparent,transparent 43px,rgba(255,107,53,.015) 43px,rgba(255,107,53,.015) 44px);pointer-events:none;z-index:0}
 
+/* LOADING */
+#loading{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+#loading.hidden{display:none}
+.spinner{width:48px;height:48px;border:3px solid rgba(255,107,53,.2);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-txt{font-size:13px;letter-spacing:.12em;color:rgba(255,107,53,.6);text-transform:uppercase}
+
+/* ERROR */
+#error-screen{position:fixed;inset:0;background:var(--bg);z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:40px;text-align:center}
+#error-screen.show{display:flex}
+.error-icon{font-size:48px}
+.error-title{font-size:18px;font-weight:700;color:var(--red)}
+.error-msg{font-size:13px;color:var(--text2);max-width:420px;line-height:1.7}
+
+/* HEADER */
 header{padding:13px 24px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;background:rgba(13,16,23,.98);position:sticky;top:0;z-index:50;gap:12px;flex-wrap:wrap}
 .brand{font-size:15px;font-weight:700;letter-spacing:.18em;color:var(--orange)}
 .brand-sub{font-size:11px;letter-spacing:.1em;color:rgba(255,107,53,.4);margin-top:2px}
 .badge{font-size:11px;padding:5px 12px;border-radius:20px;font-weight:600}
-.badge-cache{color:var(--amber);background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25)}
 .badge-live{color:var(--green);background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25)}
+.badge-loading{color:var(--amber);background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25)}
+.badge-error{color:var(--red);background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25)}
 
 /* FILTER BAR */
 .fbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 24px;position:sticky;top:57px;z-index:40}
@@ -31,101 +47,61 @@ header{padding:13px 24px;border-bottom:1px solid var(--border2);display:flex;ali
 .flabel{font-size:11px;letter-spacing:.08em;color:var(--text3);font-weight:700;text-transform:uppercase}
 .fgroup select,.fgroup input{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:8px 12px;border-radius:8px;font-size:13px;font-family:inherit;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239BA3B8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:32px}
 .fgroup select:focus,.fgroup input:focus{outline:none;border-color:var(--orange);background-color:var(--bg4)}
-optgroup{color:var(--text3);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
-option{color:var(--text);background:var(--bg3);font-size:13px;padding:4px}
+optgroup{color:var(--text3);font-size:11px;font-weight:700}
+option{color:var(--text);background:var(--bg3);font-size:13px}
 .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
 .chip{display:flex;align-items:center;gap:6px;background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.28);color:var(--orange);font-size:12px;padding:4px 11px;border-radius:20px;font-weight:500}
 .chip button{background:none;border:none;color:var(--orange);cursor:pointer;font-size:14px;line-height:1;padding:0;opacity:.7}
-.chip button:hover{opacity:1}
 .fbtn{padding:8px 16px;font-size:13px;border-radius:8px;border:1px solid;cursor:pointer;font-family:inherit;font-weight:600;transition:all .15s}
+.fbtn-orange{background:rgba(255,107,53,.1);border-color:rgba(255,107,53,.3);color:var(--orange)}
+.fbtn-blue{background:rgba(91,156,246,.1);border-color:rgba(91,156,246,.3);color:var(--blue)}
 .fbtn-ghost{background:transparent;border-color:var(--border2);color:var(--text2)}
-.fbtn-ghost:hover{border-color:var(--border2);color:var(--text);background:var(--bg3)}
-
-/* STATUS TOGGLE */
 .status-toggle{display:flex;gap:4px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:3px}
 .stbtn{padding:5px 12px;font-size:12px;border-radius:6px;border:none;cursor:pointer;font-family:inherit;font-weight:600;color:var(--text2);background:transparent;transition:all .15s;white-space:nowrap}
 .stbtn.active{background:var(--bg4);color:var(--text);border:1px solid var(--border2)}
 
 /* BODY */
 .body{padding:20px 24px;position:relative;z-index:10}
-
-/* KPIs */
 .krow{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
 .kcard{background:var(--bg2);border:1px solid var(--border2);border-top:3px solid;border-radius:10px;padding:14px 16px}
 .kval{font-size:26px;font-weight:700;line-height:1.1;margin-bottom:4px}
 .klbl{font-size:11px;letter-spacing:.07em;color:var(--text2);text-transform:uppercase;font-weight:600}
 .ksub{font-size:12px;color:var(--text3);margin-top:3px}
-
-/* KM SUMMARY */
 .km-box{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:16px;margin-bottom:20px}
 .km-title{font-size:11px;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;font-weight:700;margin-bottom:12px}
 .km-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
 .km-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
-.km-plate{font-size:16px;font-weight:700;color:var(--orange);letter-spacing:.08em}
-.km-model{font-size:12px;color:var(--text2);margin-top:1px}
-.km-val{font-size:22px;font-weight:700;margin-top:8px}
-.km-sub{font-size:11px;color:var(--text3);margin-top:2px}
-.km-foot{display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--text3);border-top:1px solid var(--border);padding-top:7px}
-
-/* TABS */
 .tab-wrap{margin-bottom:16px}
 .tabs{display:inline-flex;gap:3px;background:var(--bg2);padding:4px;border-radius:10px;border:1px solid var(--border);flex-wrap:wrap}
 .tab{padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;border-radius:7px;border:1px solid transparent;background:transparent;color:var(--text2);font-weight:500;transition:all .15s;white-space:nowrap}
 .tab.active{background:var(--bg3);color:var(--text);border-color:var(--border2)}
-.tab:hover:not(.active){color:var(--text)}
-
-/* SECTION */
 .sec{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
 .sh{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.012)}
 .st{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--text2);text-transform:uppercase}
-
-/* TABLE */
 table{width:100%;border-collapse:collapse}
 th{text-align:left;font-size:11px;letter-spacing:.07em;color:var(--text3);padding:10px 16px;border-bottom:1px solid var(--border);font-weight:700;text-transform:uppercase}
 td{font-size:13px;padding:10px 16px;border-bottom:1px solid rgba(36,42,56,.4);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(255,255,255,.018)}
-tr.inactive-row td{opacity:.55}
-
-/* BADGE */
-.bdg{font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;white-space:nowrap;display:inline-block}
-.bdg-active{color:var(--green);background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.3)}
-.bdg-inactive{color:var(--inactive);background:rgba(99,108,130,.12);border:1px solid rgba(99,108,130,.25)}
-.bdg-custom{border:1px solid}
-
-/* GRIDS */
+tr.inactive-row td{opacity:.5}
+.bdg{font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;white-space:nowrap;display:inline-block;border:1px solid}
+.bdg-active{color:var(--green);background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.3)}
+.bdg-inactive{color:var(--inactive);background:rgba(99,108,130,.12);border-color:rgba(99,108,130,.25)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-
-/* DRIVER/VEHICLE CARDS */
 .dcard,.vcard{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px}
 .dcard.inactive,.vcard.inactive{opacity:.6;border-style:dashed}
 .av{width:40px;height:40px;border-radius:50%;background:rgba(255,107,53,.15);border:2px solid rgba(255,107,53,.3);color:var(--orange);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
 .av.inactive{background:rgba(99,108,130,.15);border-color:rgba(99,108,130,.3);color:var(--inactive)}
 .av-sm{width:26px;height:26px;font-size:10px;border-width:1.5px}
-
-/* LINKS / BUTTONS */
 .mbtn{font-size:12px;color:var(--blue);background:rgba(91,156,246,.1);border:1px solid rgba(91,156,246,.25);padding:4px 10px;border-radius:6px;text-decoration:none;display:inline-block;font-weight:500}
-.btn{background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.3);color:var(--orange);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:600}
-
-/* BARS */
 .bar-wrap{height:5px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:6px}
 .bar-fill{height:100%;border-radius:3px}
-
-/* DIVIDER */
 .div-line{border-top:1px solid var(--border);margin:10px 0;padding-top:10px}
-
-/* ALERT */
 .alert-red{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2);border-radius:7px;padding:6px 11px;font-size:12px;color:var(--red);margin-top:6px;font-weight:500}
 .alert-amber{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);border-radius:7px;padding:6px 11px;font-size:12px;color:var(--amber);margin-top:6px;font-weight:500}
-
-/* DOT */
 .dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle}
-
-/* EMPTY */
 .empty{text-align:center;padding:40px;color:var(--text3);font-size:13px}
-
-/* SECTION GROUP HEADER */
 .group-header{padding:8px 16px;background:rgba(255,255,255,.025);border-bottom:1px solid var(--border);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;display:flex;align-items:center;gap:8px}
 
 @media(max-width:900px){.krow{grid-template-columns:1fr 1fr 1fr}.g3{grid-template-columns:1fr 1fr}}
@@ -133,6 +109,20 @@ tr.inactive-row td{opacity:.55}
 </style>
 </head>
 <body>
+
+<!-- LOADING -->
+<div id="loading">
+  <canvas id="radar-load" width="60" height="60"></canvas>
+  <div class="loading-txt" id="loading-txt">Carregando dados da frota...</div>
+</div>
+
+<!-- ERROR -->
+<div id="error-screen">
+  <div class="error-icon">⚠️</div>
+  <div class="error-title">Falha ao carregar dados</div>
+  <div class="error-msg" id="error-msg">Não foi possível conectar às APIs de logística.</div>
+  <button class="fbtn fbtn-orange" onclick="loadData()">↻ Tentar novamente</button>
+</div>
 
 <!-- HEADER -->
 <header>
@@ -144,16 +134,15 @@ tr.inactive-row td{opacity:.55}
     </div>
   </div>
   <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-    <span id="syncBadge" class="badge badge-cache">📦 Cache · 19/04/2026</span>
-    <button onclick="syncData()" style="background:rgba(91,156,246,.1);border:1px solid rgba(91,156,246,.3);color:var(--blue);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:600">↻ Atualizar dados</button>
+    <span id="syncBadge" class="badge badge-loading">⟳ Carregando...</span>
+    <span id="syncTime" style="font-size:12px;color:var(--text3)"></span>
+    <button class="fbtn fbtn-orange" onclick="loadData()" id="refreshBtn" style="padding:7px 14px">↻ Atualizar</button>
   </div>
 </header>
 
 <!-- FILTER BAR -->
 <div class="fbar">
   <div class="frow">
-
-    <!-- Período -->
     <div class="fgroup">
       <span class="flabel">De</span>
       <input type="date" id="fDateFrom" onchange="applyFilters()">
@@ -162,36 +151,28 @@ tr.inactive-row td{opacity:.55}
       <span class="flabel">Até</span>
       <input type="date" id="fDateTo" onchange="applyFilters()">
     </div>
-
-    <!-- Motorista com ativos/inativos -->
     <div class="fgroup" style="min-width:200px">
       <span class="flabel">Motorista</span>
       <select id="fDriver" onchange="applyFilters()">
         <option value="">Todos os motoristas</option>
-        <optgroup label="● ATIVOS" id="driverActiveGroup"></optgroup>
-        <optgroup label="○ INATIVOS" id="driverInactiveGroup"></optgroup>
+        <optgroup label="ATIVOS" id="driverActiveGroup"></optgroup>
+        <optgroup label="INATIVOS" id="driverInactiveGroup"></optgroup>
       </select>
     </div>
-
-    <!-- Veículo com ativos/inativos -->
     <div class="fgroup" style="min-width:200px">
       <span class="flabel">Veículo</span>
       <select id="fVehicle" onchange="applyFilters()">
         <option value="">Todos os veículos</option>
-        <optgroup label="● ATIVOS" id="vehicleActiveGroup"></optgroup>
-        <optgroup label="○ INATIVOS" id="vehicleInactiveGroup"></optgroup>
+        <optgroup label="ATIVOS" id="vehicleActiveGroup"></optgroup>
+        <optgroup label="INATIVOS" id="vehicleInactiveGroup"></optgroup>
       </select>
     </div>
-
-    <!-- Tipo de abastecimento -->
     <div class="fgroup">
       <span class="flabel">Abastecimento</span>
       <select id="fFuelType" onchange="applyFilters()">
         <option value="">Todos os tipos</option>
       </select>
     </div>
-
-    <!-- Status toggle -->
     <div class="fgroup">
       <span class="flabel">Status</span>
       <div class="status-toggle">
@@ -200,15 +181,14 @@ tr.inactive-row td{opacity:.55}
         <button class="stbtn"        id="stInact"  onclick="setStatus('inactive')">Inativos</button>
       </div>
     </div>
-
     <button class="fbtn" onclick="goCurrentMonth()" style="align-self:flex-end;background:rgba(91,156,246,.1);border-color:rgba(91,156,246,.3);color:var(--blue)">📅 Mês atual</button>
-    <button class="fbtn fbtn-ghost" onclick="resetFilters()" style="align-self:flex-end">✕ Limpar tudo</button>
+    <button class="fbtn fbtn-ghost" onclick="resetFilters()" style="align-self:flex-end">✕ Limpar</button>
   </div>
   <div class="chips" id="chips"></div>
 </div>
 
 <!-- BODY -->
-<div class="body">
+<div class="body" id="dashboard" style="display:none">
   <div class="krow" id="kpis"></div>
   <div id="kmSummary"></div>
   <div class="tab-wrap"><div class="tabs" id="tabs"></div></div>
@@ -216,226 +196,263 @@ tr.inactive-row td{opacity:.55}
 </div>
 
 <script>
-// ════════════════════════════════════════════════
-// SEED DATA — atualizado 19/04/2026
-// ════════════════════════════════════════════════
-const SEED = {
-  employees:[
-    {id:1,firstName:"Claudio Fernando",lastName:"Lopes Monteiro",active:true,
-     vehicles:[{plateNumber:"LTI4E30",model:"MONTANA LS2",km:11678},{plateNumber:"QSO2E14",model:"TERA",km:6007},{plateNumber:"KQJ6J77",model:"MONTANA SPORT",km:184073},{plateNumber:"LPF5C24",model:"MERIVA JOY",km:246821},{plateNumber:"TYR1I67",model:"STRADA ENDURANCE",km:1223},{plateNumber:"TZA9H16",model:"ARGO",km:17984},{plateNumber:"PYV8D57",model:"MONTANA LS2",km:211358}]},
-    {id:2,firstName:"Jane",lastName:"Raposo Ferreira Monteiro",active:true,
-     vehicles:[{plateNumber:"QSO2E14",model:"TERA",km:6007}]},
-    {id:3,firstName:"Everton",lastName:"Nogueira",active:true,
-     vehicles:[{plateNumber:"TZA9H16",model:"ARGO",km:17984}]},
-    {id:4,firstName:"Willian",lastName:"Regino",active:true,
-     vehicles:[{plateNumber:"TYR1I67",model:"STRADA ENDURANCE",km:1223}]},
-    {id:8,firstName:"Arthur",lastName:"da Silva Barateiro",active:true,
-     vehicles:[{plateNumber:"TZA9H16",model:"ARGO",km:17984}]},
-    {id:5,firstName:"Vanderson",lastName:"Pinheiro Trajano",active:false,
-     vehicles:[{plateNumber:"PYV8D57",model:"MONTANA LS2",km:211358}]},
-    {id:6,firstName:"Matheus",lastName:"Oliveira Barreto",active:false,
-     vehicles:[{plateNumber:"LPF5C24",model:"MERIVA JOY",km:246821}]},
-    {id:7,firstName:"João Victor",lastName:"Silva de Oliveira",active:false,
-     vehicles:[{plateNumber:"LPF5C24",model:"MERIVA JOY",km:246821}]}
-  ],
-  vehicles:[
-    {id:1,brand:"GM",model:"MERIVA JOY",year:2008,color:"PRATA",hasGNV:true,km:246821,plateNumber:"LPF5C24",active:true,fuel:{description:"ETANOL"}},
-    {id:7,brand:"VW",model:"Saveiro",year:2025,color:"–",hasGNV:false,km:12784,plateNumber:"UAX3J47",active:true,fuel:{description:"ETANOL"}},
-    {id:5,brand:"GM",model:"MONTANA LS2",year:2017,color:"BRANCO",hasGNV:true,km:211358,plateNumber:"PYV8D57",active:true,fuel:{description:"ETANOL"}},
-    {id:2,brand:"GM",model:"MONTANA SPORT",year:2010,color:"PRATA",hasGNV:true,km:184073,plateNumber:"KQJ6J77",active:true,fuel:{description:"ETANOL"}},
-    {id:3,brand:"GM",model:"MONTANA LS2",year:2018,color:"CINZA",hasGNV:true,km:11678,plateNumber:"LTI4E30",active:true,fuel:{description:"ETANOL"}},
-    {id:4,brand:"FIAT",model:"ARGO",year:2025,color:"BRANCO",hasGNV:false,km:17984,plateNumber:"TZA9H16",active:true,fuel:{description:"ETANOL"}},
-    {id:6,brand:"VW",model:"TERA",year:2025,color:"PRETO",hasGNV:false,km:6007,plateNumber:"QSO2E14",active:true,fuel:{description:"ETANOL"}},
-    {id:9,brand:"FIAT",model:"STRADA ENDURANCE",year:2026,color:"PRETO",hasGNV:false,km:1223,plateNumber:"TYR1I67",active:true,fuel:{description:"ETANOL"}},
-    {id:8,brand:"GM",model:"MERIVA JOY",year:2008,color:"–",hasGNV:true,km:1,plateNumber:"AAA0A00",active:false,fuel:{description:"ETANOL"}}
-  ],
-  fuel:[{"id": 3, "date": "2026-01-26", "type": "REEMBOLSO", "value": "45.96", "km": 183096, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 4, "date": "2026-01-26", "type": "REEMBOLSO", "value": "20.77", "km": 183216, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 5, "date": "2026-01-29", "type": "REEMBOLSO", "value": "54.94", "km": 183391, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 6, "date": "2026-01-29", "type": "REEMBOLSO", "value": "30.86", "km": 183513, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 7, "date": "2026-01-29", "type": "REEMBOLSO", "value": "102", "km": 183326, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "ETANOL"}}, {"id": 11, "date": "2026-02-10", "type": "EXCLUIDO", "value": "0", "km": 11678, "driver": {"id": 4, "firstName": "Willian", "lastName": "Regino"}, "vehicle": {"plateNumber": "LTI4E30", "model": "MONTANA LS2"}, "fuel": {"description": "ETANOL"}}, {"id": 1, "date": "2026-02-02", "type": "EXCLUIDO", "value": "0", "km": 1, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "LPF5C24", "model": "MERIVA JOY"}, "fuel": {"description": "GNV"}}, {"id": 28, "date": "2026-01-02", "type": "VALE OLIVEIRENSE", "value": "30.94", "km": 182488, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 29, "date": "2026-01-09", "type": "VALE OLIVEIRENSE", "value": "48.53", "km": 182640, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 30, "date": "2026-01-15", "type": "VALE OLIVEIRENSE", "value": "57.37", "km": 182763, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 31, "date": "2026-01-20", "type": "VALE OLIVEIRENSE", "value": "39.22", "km": 182854, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 2, "date": "2026-01-25", "type": "VALE OLIVEIRENSE", "value": "46.54", "km": 182946, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 8, "date": "2026-01-30", "type": "VALE OLIVEIRENSE", "value": "45.68", "km": 183649, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 9, "date": "2026-02-03", "type": "VALE OLIVEIRENSE", "value": "36.58", "km": 183728, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 10, "date": "2026-02-09", "type": "VALE OLIVEIRENSE", "value": "59.20", "km": 183877, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 12, "date": "2026-02-13", "type": "VALE OLIVEIRENSE", "value": "28.85", "km": 183947, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 13, "date": "2026-02-18", "type": "VALE OLIVEIRENSE", "value": "42.11", "km": 184073, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 14, "date": "2026-02-09", "type": "VALE OLIVEIRENSE", "value": "208.64", "km": 4071, "driver": {"id": 2, "firstName": "Jane", "lastName": "Raposo Ferreira Monteiro"}, "vehicle": {"plateNumber": "QSO2E14", "model": "TERA"}, "fuel": {"description": "ETANOL"}}, {"id": 34, "date": "2025-01-02", "type": "VALE OLIVEIRENSE", "value": "44.22", "km": 173414, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 35, "date": "2025-01-09", "type": "VALE OLIVEIRENSE", "value": "48.22", "km": 173513, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 36, "date": "2025-01-12", "type": "VALE OLIVEIRENSE", "value": "39.30", "km": 173597, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 37, "date": "2025-01-14", "type": "VALE OLIVEIRENSE", "value": "42.69", "km": 173709, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 38, "date": "2025-01-21", "type": "VALE OLIVEIRENSE", "value": "50.24", "km": 173843, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 39, "date": "2025-01-22", "type": "VALE OLIVEIRENSE", "value": "67.44", "km": 173980, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 40, "date": "2025-01-25", "type": "VALE OLIVEIRENSE", "value": "31.61", "km": 174041, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 41, "date": "2025-01-27", "type": "VALE OLIVEIRENSE", "value": "39.77", "km": 174150, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 42, "date": "2025-01-29", "type": "VALE OLIVEIRENSE", "value": "24.01", "km": 174202, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}, {"id": 43, "date": "2025-01-30", "type": "VALE OLIVEIRENSE", "value": "23.97", "km": 174247, "driver": {"id": 1, "firstName": "Claudio Fernando", "lastName": "Lopes Monteiro"}, "vehicle": {"plateNumber": "KQJ6J77", "model": "MONTANA SPORT"}, "fuel": {"description": "GNV"}}],
-  routes:[
-    {id:262,lat:-22.8600032,lon:-43.5276952,address:"https://maps.google.com/?q=-22.8600032,-43.5276952",date:"2026-04-18T22:08:06Z",km:1223,obs:"OK",driver:{id:4,firstName:"Willian",lastName:"Regino"},vehicle:{brand:"FIAT",model:"STRADA ENDURANCE",plateNumber:"TYR1I67"}},
-    {id:261,lat:-22.7615892,lon:-43.3200289,address:"https://maps.google.com/?q=-22.7615892,-43.3200289",date:"2026-04-17T21:28:15Z",km:17984,obs:"OK",driver:{id:3,firstName:"Everton",lastName:"Nogueira"},vehicle:{brand:"FIAT",model:"ARGO",plateNumber:"TZA9H16"}},
-    {id:260,lat:-22.8600624,lon:-43.5275685,address:"https://maps.google.com/?q=-22.8600624,-43.5275685",date:"2026-04-17T19:02:07Z",km:1141,obs:"OK",driver:{id:4,firstName:"Willian",lastName:"Regino"},vehicle:{brand:"FIAT",model:"STRADA ENDURANCE",plateNumber:"TYR1I67"}},
-    {id:259,lat:-22.5417315,lon:-43.573083,address:"https://maps.google.com/?q=-22.5417315,-43.573083",date:"2026-04-17T15:44:39Z",km:1067,obs:"OK",driver:{id:4,firstName:"Willian",lastName:"Regino"},vehicle:{brand:"FIAT",model:"STRADA ENDURANCE",plateNumber:"TYR1I67"}},
-    {id:258,lat:-22.4474588,lon:-44.3745938,address:"https://maps.google.com/?q=-22.4474588,-44.3745938",date:"2026-04-17T11:07:16Z",km:17764,obs:"OK",driver:{id:3,firstName:"Everton",lastName:"Nogueira"},vehicle:{brand:"FIAT",model:"ARGO",plateNumber:"TZA9H16"}},
-    {id:257,lat:-22.4549269,lon:-43.469093,address:"https://maps.google.com/?q=-22.4549269,-43.469093",date:"2026-04-17T09:26:28Z",km:1042,obs:"OK",driver:{id:4,firstName:"Willian",lastName:"Regino"},vehicle:{brand:"FIAT",model:"STRADA ENDURANCE",plateNumber:"TYR1I67"}},
-    {id:256,lat:-22.7615577,lon:-43.3199761,address:"https://maps.google.com/?q=-22.7615577,-43.3199761",date:"2026-04-16T21:33:09Z",km:17549,obs:"OK",driver:{id:3,firstName:"Everton",lastName:"Nogueira"},vehicle:{brand:"FIAT",model:"ARGO",plateNumber:"TZA9H16"}},
-    {id:255,lat:-22.994028,lon:-43.3669002,address:"https://maps.google.com/?q=-22.994028,-43.3669002",date:"2026-04-16T17:17:54Z",km:204561,obs:"OK",driver:{id:5,firstName:"Vanderson",lastName:"Pinheiro Trajano"},vehicle:{brand:"GM",model:"MONTANA LS2",plateNumber:"PYV8D57"}},
-    {id:254,lat:-22.4474675,lon:-44.3745833,address:"https://maps.google.com/?q=-22.4474675,-44.3745833",date:"2026-04-16T12:05:31Z",km:17301,obs:"OK",driver:{id:3,firstName:"Everton",lastName:"Nogueira"},vehicle:{brand:"FIAT",model:"ARGO",plateNumber:"TZA9H16"}},
-    {id:253,lat:-22.9195017,lon:-43.3590022,address:"https://maps.google.com/?q=-22.9195017,-43.3590022",date:"2026-04-16T11:59:26Z",km:204551,obs:"OK",driver:{id:5,firstName:"Vanderson",lastName:"Pinheiro Trajano"},vehicle:{brand:"GM",model:"MONTANA LS2",plateNumber:"PYV8D57"}},
-    {id:251,lat:-22.860115,lon:-43.527495,address:"https://maps.google.com/?q=-22.860115,-43.527495",date:"2026-04-15T22:04:28Z",km:961,obs:"OK",driver:{id:4,firstName:"Willian",lastName:"Regino"},vehicle:{brand:"FIAT",model:"STRADA ENDURANCE",plateNumber:"TYR1I67"}},
-    {id:250,lat:-22.76192574,lon:-43.32020917,address:"https://maps.google.com/?q=-22.76192574,-43.32020917",date:"2026-04-15T21:08:03Z",km:17100,obs:"OK",driver:{id:3,firstName:"Everton",lastName:"Nogueira"},vehicle:{brand:"FIAT",model:"ARGO",plateNumber:"TZA9H16"}},
-    {id:248,lat:-23.0232583,lon:-43.5032817,address:"https://maps.google.com/?q=-23.0232583,-43.5032817",date:"2026-04-15T18:41:00Z",km:901,obs:"OK",driver:{id:4,firstName:"Willian",lastName:"Regino"},vehicle:{brand:"FIAT",model:"STRADA ENDURANCE",plateNumber:"TYR1I67"}},
-    {id:246,lat:-22.9521967,lon:-43.3789983,address:"https://maps.google.com/?q=-22.9521967,-43.3789983",date:"2026-04-15T15:18:13Z",km:870,obs:"OK",driver:{id:4,firstName:"Willian",lastName:"Regino"},vehicle:{brand:"FIAT",model:"STRADA ENDURANCE",plateNumber:"TYR1I67"}},
-    {id:244,lat:-22.86004919,lon:-43.21840913,address:"https://maps.google.com/?q=-22.86004919,-43.21840913",date:"2026-04-15T13:21:11Z",km:17078,obs:"OK",driver:{id:3,firstName:"Everton",lastName:"Nogueira"},vehicle:{brand:"FIAT",model:"ARGO",plateNumber:"TZA9H16"}},
-    {id:243,lat:-22.994,lon:-43.368425,address:"https://maps.google.com/?q=-22.994,-43.368425",date:"2026-04-15T12:50:48Z",km:845,obs:"OK",driver:{id:4,firstName:"Willian",lastName:"Regino"},vehicle:{brand:"FIAT",model:"STRADA ENDURANCE",plateNumber:"TYR1I67"}},
-    {id:239,lat:-22.8600568,lon:-43.5275356,address:"https://maps.google.com/?q=-22.8600568,-43.5275356",date:"2026-04-14T20:59:46Z",km:798,obs:"OK",driver:{id:4,firstName:"Willian",lastName:"Regino"},vehicle:{brand:"FIAT",model:"STRADA ENDURANCE",plateNumber:"TYR1I67"}},
-    {id:238,lat:-22.7615585,lon:-43.3200633,address:"https://maps.google.com/?q=-22.7615585,-43.3200633",date:"2026-04-14T19:56:03Z",km:16990,obs:"OK",driver:{id:3,firstName:"Everton",lastName:"Nogueira"},vehicle:{brand:"FIAT",model:"ARGO",plateNumber:"TZA9H16"}},
-    {id:237,lat:-22.8604897,lon:-43.2187949,address:"https://maps.google.com/?q=-22.8604897,-43.2187949",date:"2026-04-14T16:02:58Z",km:204483,obs:"OK",driver:{id:5,firstName:"Vanderson",lastName:"Pinheiro Trajano"},vehicle:{brand:"GM",model:"MONTANA LS2",plateNumber:"PYV8D57"}},
-    {id:236,lat:-22.9943706,lon:-43.3670377,address:"https://maps.google.com/?q=-22.9943706,-43.3670377",date:"2026-04-14T14:35:28Z",km:761,obs:"OK",driver:{id:4,firstName:"Willian",lastName:"Regino"},vehicle:{brand:"FIAT",model:"STRADA ENDURANCE",plateNumber:"TYR1I67"}},
-    {id:235,lat:-22.87733,lon:-43.2551676,address:"https://maps.google.com/?q=-22.87733,-43.2551676",date:"2026-04-14T14:09:14Z",km:740,obs:"OK",driver:{id:4,firstName:"Willian",lastName:"Regino"},vehicle:{brand:"FIAT",model:"STRADA ENDURANCE",plateNumber:"TYR1I67"}}
-  ]
+// ════════════════════════════════════════
+// APIs
+// ════════════════════════════════════════
+const APIS = {
+  employees: 'https://log.rradar.com.br/employee/find/all',
+  vehicles:  'https://log.rradar.com.br/vehicle/find/all',
+  fuel:      'https://log.rradar.com.br/fuelhistory/find/all',
+  routes:    'https://log.rradar.com.br/route/find/all'
 };
 
-// ════════════════════════════════════════════════
+// ════════════════════════════════════════
 // STATE
-// ════════════════════════════════════════════════
-let DATA    = SEED;
-let TAB     = "overview";
+// ════════════════════════════════════════
+let DATA    = null;
+let TAB     = 'overview';
+let STATUS  = 'all';
+let FILTERS = {dateFrom:'',dateTo:'',driver:'',vehicle:'',fuelType:''};
 let ANG     = 0;
-let STATUS  = "all"; // all | active | inactive
-let FILTERS = {dateFrom:"",dateTo:"",driver:"",vehicle:"",fuelType:""};
 
-// ════════════════════════════════════════════════
+// ════════════════════════════════════════
 // UTILS
-// ════════════════════════════════════════════════
-const fc   = v => Number(v||0).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
-const fkm  = v => Number(v||0).toLocaleString("pt-BR");
-const fdt  = s => { if(!s) return "–"; return new Date(s).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",year:"2-digit",hour:"2-digit",minute:"2-digit"}); };
-const fday = s => { if(!s) return "–"; return new Date(s).toLocaleDateString("pt-BR"); };
-const ini  = n => (n||"").split(" ").filter((_,i,a)=>i===0||i===a.length-1).map(w=>w[0]).join("").toUpperCase()||"?";
+// ════════════════════════════════════════
+const fc   = v => Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fkm  = v => Number(v||0).toLocaleString('pt-BR');
+const fdt  = s => { if(!s) return '–'; return new Date(s).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}); };
+const fday = s => { if(!s) return '–'; return new Date(s).toLocaleDateString('pt-BR'); };
+const ini  = n => (n||'').split(' ').filter((_,i,a)=>i===0||i===a.length-1).map(w=>w[0]).join('').toUpperCase()||'?';
 const dAgo = s => { if(!s) return 999; return Math.floor((Date.now()-new Date(s))/86400000); };
+const FCLR = {'REEMBOLSO':'#FBBF24','VALE OLIVEIRENSE':'#5B9CF6','EXCLUIDO':'#636C82','DIRETO':'#4ADE80'};
+const tc   = c => FCLR[c]||'#9BA3B8';
+const bdg  = (txt,c) => `<span class="bdg" style="color:${c};background:${c}15;border-color:${c}35">${txt}</span>`;
+const bar  = (pct,c) => `<div class="bar-wrap"><div class="bar-fill" style="width:${Math.min(pct||0,100)}%;background:${c}"></div></div>`;
+const sBdg = a => a ? `<span class="bdg bdg-active">● Ativo</span>` : `<span class="bdg bdg-inactive">○ Inativo</span>`;
 
-const FCLR = {REEMBOLSO:"#FBBF24","VALE OLIVEIRENSE":"#5B9CF6",EXCLUIDO:"#636C82",DIRETO:"#4ADE80"};
-const tc   = c => FCLR[c]||"#9BA3B8";
+// ════════════════════════════════════════
+// RADAR ANIMATION
+// ════════════════════════════════════════
+function drawRadar(id, sz) {
+  const cv = document.getElementById(id);
+  if(!cv) return;
+  const x = cv.getContext('2d');
+  const c = sz/2;
+  x.clearRect(0,0,sz,sz);
+  x.strokeStyle='#FF6B35'; x.lineWidth=0.8; x.setLineDash([2,2]);
+  x.beginPath(); x.arc(c,c,c-2,0,Math.PI*2); x.stroke();
+  x.setLineDash([]); x.globalAlpha=0.4; x.lineWidth=0.5;
+  x.beginPath(); x.arc(c,c,(c-2)*0.6,0,Math.PI*2); x.stroke();
+  x.globalAlpha=1; x.lineWidth=sz>30?2.5:1.8; x.lineCap='round';
+  const r=(ANG-90)*Math.PI/180;
+  const len=(c-2)*0.85;
+  x.beginPath(); x.moveTo(c,c); x.lineTo(c+len*Math.cos(r),c+len*Math.sin(r)); x.stroke();
+  x.beginPath(); x.arc(c,c,sz>30?3:2,0,Math.PI*2); x.fillStyle='#FF6B35'; x.fill();
+}
+setInterval(()=>{ ANG=(ANG+2)%360; drawRadar('radar',26); drawRadar('radar-load',60); },30);
 
-const bdg = (txt,c) => `<span class="bdg bdg-custom" style="color:${c};background:${c}15;border-color:${c}35">${txt}</span>`;
-const bar = (pct,c) => `<div class="bar-wrap"><div class="bar-fill" style="width:${Math.min(pct||0,100)}%;background:${c}"></div></div>`;
+// ════════════════════════════════════════
+// LOAD DATA FROM APIs
+// ════════════════════════════════════════
+async function loadData() {
+  const badge = document.getElementById('syncBadge');
+  const refreshBtn = document.getElementById('refreshBtn');
+  const loadingTxt = document.getElementById('loading-txt');
 
-// Status badge helper
-const statusBdg = a => a
-  ? `<span class="bdg bdg-active">● Ativo</span>`
-  : `<span class="bdg bdg-inactive">○ Inativo</span>`;
+  document.getElementById('loading').classList.remove('hidden');
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('error-screen').classList.remove('show');
+  badge.className = 'badge badge-loading';
+  badge.textContent = '⟳ Carregando...';
+  refreshBtn.disabled = true;
 
-// ════════════════════════════════════════════════
-// FILTER HELPERS
-// ════════════════════════════════════════════════
+  try {
+    loadingTxt.textContent = 'Buscando motoristas...';
+    const empRes = await fetch(APIS.employees);
+    if(!empRes.ok) throw new Error(`employees: ${empRes.status}`);
+    const employees = await empRes.json();
+
+    loadingTxt.textContent = 'Buscando frota...';
+    const vehRes = await fetch(APIS.vehicles);
+    if(!vehRes.ok) throw new Error(`vehicles: ${vehRes.status}`);
+    const vehicles = await vehRes.json();
+
+    loadingTxt.textContent = 'Buscando abastecimentos...';
+    const fuelRes = await fetch(APIS.fuel);
+    if(!fuelRes.ok) throw new Error(`fuel: ${fuelRes.status}`);
+    const fuel = await fuelRes.json();
+
+    loadingTxt.textContent = 'Buscando rotas...';
+    const routeRes = await fetch(APIS.routes);
+    if(!routeRes.ok) throw new Error(`routes: ${routeRes.status}`);
+    const routes = await routeRes.json();
+
+    DATA = { employees, vehicles, fuel, routes };
+
+    const now = new Date();
+    badge.className = 'badge badge-live';
+    badge.textContent = '⬤ Dados ao vivo';
+    document.getElementById('syncTime').textContent =
+      `Atualizado ${now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
+
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('dashboard').style.display = 'block';
+
+    populateFilters();
+    setCurrentMonth();
+    renderChips();
+    render();
+
+  } catch(e) {
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('error-screen').classList.add('show');
+    document.getElementById('error-msg').textContent =
+      `Erro ao conectar: ${e.message}. Verifique se as APIs estão acessíveis.`;
+    badge.className = 'badge badge-error';
+    badge.textContent = '✕ Erro';
+  }
+
+  refreshBtn.disabled = false;
+}
+
+// ════════════════════════════════════════
+// FILTER LOGIC
+// ════════════════════════════════════════
 function filterRoutes(routes) {
   return routes.filter(r => {
     const d = new Date(r.date);
     if(FILTERS.dateFrom && d < new Date(FILTERS.dateFrom)) return false;
-    if(FILTERS.dateTo   && d > new Date(FILTERS.dateTo+"T23:59:59")) return false;
+    if(FILTERS.dateTo   && d > new Date(FILTERS.dateTo+'T23:59:59')) return false;
     if(FILTERS.driver   && String(r.driver?.id) !== FILTERS.driver) return false;
     if(FILTERS.vehicle  && r.vehicle?.plateNumber !== FILTERS.vehicle) return false;
     return true;
   });
 }
+
 function filterFuel(fuel) {
   return fuel.filter(f => {
     const d = new Date(f.date);
     if(FILTERS.dateFrom  && d < new Date(FILTERS.dateFrom)) return false;
-    if(FILTERS.dateTo    && d > new Date(FILTERS.dateTo+"T23:59:59")) return false;
+    if(FILTERS.dateTo    && d > new Date(FILTERS.dateTo+'T23:59:59')) return false;
     if(FILTERS.driver    && String(f.driver?.id) !== FILTERS.driver) return false;
     if(FILTERS.vehicle   && f.vehicle?.plateNumber !== FILTERS.vehicle) return false;
     if(FILTERS.fuelType  && f.type !== FILTERS.fuelType) return false;
     return true;
   });
 }
+
 function filterByStatus(arr) {
-  if(STATUS==="active")   return arr.filter(x=>x.active);
-  if(STATUS==="inactive") return arr.filter(x=>!x.active);
+  if(STATUS==='active')   return arr.filter(x=>x.active);
+  if(STATUS==='inactive') return arr.filter(x=>!x.active);
   return arr;
 }
 
-// KM por veículo no período filtrado
 function calcKm(routes) {
   const byV = {};
   routes.forEach(r => {
     const p = r.vehicle?.plateNumber;
-    if(!byV[p]) byV[p] = {plate:p,model:r.vehicle?.model||"",brand:r.vehicle?.brand||"",entries:[]};
+    if(!byV[p]) byV[p]={plate:p,model:r.vehicle?.model||'',brand:r.vehicle?.brand||'',entries:[]};
     byV[p].entries.push(r);
   });
   return Object.values(byV).map(v => {
     const s = v.entries.sort((a,b)=>new Date(a.date)-new Date(b.date));
-    return {plate:v.plate,model:v.model,brand:v.brand,
-      traveled:s[s.length-1].km-s[0].km,
-      firstKm:s[0].km,lastKm:s[s.length-1].km,
-      firstDate:s[0].date,lastDate:s[s.length-1].date,stops:s.length};
+    return {
+      plate:v.plate, model:v.model, brand:v.brand,
+      traveled: s[s.length-1].km - s[0].km,
+      firstKm:s[0].km, lastKm:s[s.length-1].km,
+      firstDate:s[0].date, lastDate:s[s.length-1].date,
+      stops:s.length
+    };
   }).sort((a,b)=>b.traveled-a.traveled);
 }
-const hasFilter = () => FILTERS.dateFrom||FILTERS.dateTo||FILTERS.driver||FILTERS.vehicle||FILTERS.fuelType||STATUS!=="all";
 
-// ════════════════════════════════════════════════
+const hasFilter = () => FILTERS.dateFrom||FILTERS.dateTo||FILTERS.driver||FILTERS.vehicle||FILTERS.fuelType||STATUS!=='all';
+
+// ════════════════════════════════════════
 // POPULATE SELECTS
-// ════════════════════════════════════════════════
+// ════════════════════════════════════════
 function populateFilters() {
-  const { employees, vehicles, fuel } = DATA;
+  const {employees, vehicles, fuel} = DATA;
 
-  // Driver — ativos e inativos em grupos
-  const dag = document.getElementById("driverActiveGroup");
-  const dig = document.getElementById("driverInactiveGroup");
-  dag.innerHTML = ""; dig.innerHTML = "";
+  const dag = document.getElementById('driverActiveGroup');
+  const dig = document.getElementById('driverInactiveGroup');
+  dag.innerHTML = ''; dig.innerHTML = '';
   employees.forEach(e => {
-    const opt = document.createElement("option");
+    const opt = document.createElement('option');
     opt.value = e.id;
     opt.textContent = `${e.firstName} ${e.lastName}`;
     (e.active ? dag : dig).appendChild(opt);
   });
 
-  // Vehicle — ativos e inativos em grupos
-  const vag = document.getElementById("vehicleActiveGroup");
-  const vig = document.getElementById("vehicleInactiveGroup");
-  vag.innerHTML = ""; vig.innerHTML = "";
+  const vag = document.getElementById('vehicleActiveGroup');
+  const vig = document.getElementById('vehicleInactiveGroup');
+  vag.innerHTML = ''; vig.innerHTML = '';
   vehicles.forEach(v => {
-    const opt = document.createElement("option");
+    const opt = document.createElement('option');
     opt.value = v.plateNumber;
     opt.textContent = `${v.plateNumber} · ${v.brand} ${v.model}`;
     (v.active ? vag : vig).appendChild(opt);
   });
 
-  // Fuel types
-  const ftSel = document.getElementById("fFuelType");
+  const ftSel = document.getElementById('fFuelType');
   const prev  = ftSel.value;
   ftSel.innerHTML = '<option value="">Todos os tipos</option>';
-  [...new Set(fuel.map(f=>f.type).filter(t=>t!=="EXCLUIDO"))].forEach(t => {
-    const opt = document.createElement("option");
+  [...new Set(fuel.map(f=>f.type).filter(t=>t!=='EXCLUIDO'))].forEach(t => {
+    const opt = document.createElement('option');
     opt.value = t; opt.textContent = t;
     ftSel.appendChild(opt);
   });
   ftSel.value = prev;
 }
 
-// ════════════════════════════════════════════════
-// FILTER ACTIONS
-// ════════════════════════════════════════════════
 function applyFilters() {
-  FILTERS.dateFrom = document.getElementById("fDateFrom").value;
-  FILTERS.dateTo   = document.getElementById("fDateTo").value;
-  FILTERS.driver   = document.getElementById("fDriver").value;
-  FILTERS.vehicle  = document.getElementById("fVehicle").value;
-  FILTERS.fuelType = document.getElementById("fFuelType").value;
+  FILTERS.dateFrom = document.getElementById('fDateFrom').value;
+  FILTERS.dateTo   = document.getElementById('fDateTo').value;
+  FILTERS.driver   = document.getElementById('fDriver').value;
+  FILTERS.vehicle  = document.getElementById('fVehicle').value;
+  FILTERS.fuelType = document.getElementById('fFuelType').value;
   renderChips(); render();
 }
 
 function setStatus(s) {
   STATUS = s;
-  document.querySelectorAll(".stbtn").forEach(b=>b.classList.remove("active"));
-  document.getElementById({all:"stAll",active:"stActive",inactive:"stInact"}[s]).classList.add("active");
+  document.querySelectorAll('.stbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById({all:'stAll',active:'stActive',inactive:'stInact'}[s]).classList.add('active');
   renderChips(); render();
+}
+
+function setCurrentMonth() {
+  const now   = new Date();
+  const first = new Date(now.getFullYear(), now.getMonth(), 1);
+  const last  = new Date(now.getFullYear(), now.getMonth()+1, 0);
+  const fmt   = d => d.toISOString().split('T')[0];
+  FILTERS.dateFrom = fmt(first);
+  FILTERS.dateTo   = fmt(last);
+  document.getElementById('fDateFrom').value = FILTERS.dateFrom;
+  document.getElementById('fDateTo').value   = FILTERS.dateTo;
 }
 
 function goCurrentMonth() {
-  FILTERS.driver = ""; FILTERS.vehicle = ""; FILTERS.fuelType = "";
-  document.getElementById("fDriver").value = "";
-  document.getElementById("fVehicle").value = "";
-  document.getElementById("fFuelType").value = "";
-  setCurrentMonth();
-  renderChips(); render();
+  FILTERS.driver=''; FILTERS.vehicle=''; FILTERS.fuelType='';
+  ['fDriver','fVehicle','fFuelType'].forEach(id=>document.getElementById(id).value='');
+  setCurrentMonth(); renderChips(); render();
 }
 
 function resetFilters() {
-  FILTERS = {dateFrom:"",dateTo:"",driver:"",vehicle:"",fuelType:""};
-  STATUS = "all";
-  ["fDateFrom","fDateTo","fDriver","fVehicle","fFuelType"].forEach(id=>document.getElementById(id).value="");
-  document.querySelectorAll(".stbtn").forEach(b=>b.classList.remove("active"));
-  document.getElementById("stAll").classList.add("active");
+  FILTERS = {dateFrom:'',dateTo:'',driver:'',vehicle:'',fuelType:''};
+  STATUS = 'all';
+  ['fDateFrom','fDateTo','fDriver','fVehicle','fFuelType'].forEach(id=>document.getElementById(id).value='');
+  document.querySelectorAll('.stbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('stAll').classList.add('active');
   renderChips(); render();
 }
 
 function clearFilter(type) {
-  const map = {date:["fDateFrom","fDateTo"],driver:["fDriver"],vehicle:["fVehicle"],fuelType:["fFuelType"]};
-  (map[type]||[]).forEach(id=>{ document.getElementById(id).value=""; FILTERS[id.replace("f","").toLowerCase()]=undefined; });
-  if(type==="date") { FILTERS.dateFrom=""; FILTERS.dateTo=""; }
-  else FILTERS[type]="";
-  if(type==="status") { STATUS="all"; document.querySelectorAll(".stbtn").forEach(b=>b.classList.remove("active")); document.getElementById("stAll").classList.add("active"); }
+  if(type==='date'){ FILTERS.dateFrom=''; FILTERS.dateTo=''; document.getElementById('fDateFrom').value=''; document.getElementById('fDateTo').value=''; }
+  else if(type==='driver')  { FILTERS.driver='';   document.getElementById('fDriver').value=''; }
+  else if(type==='vehicle') { FILTERS.vehicle='';  document.getElementById('fVehicle').value=''; }
+  else if(type==='fuelType'){ FILTERS.fuelType=''; document.getElementById('fFuelType').value=''; }
+  else if(type==='status')  { STATUS='all'; document.querySelectorAll('.stbtn').forEach(b=>b.classList.remove('active')); document.getElementById('stAll').classList.add('active'); }
   renderChips(); render();
 }
 
@@ -443,140 +460,102 @@ function renderChips() {
   const chips = [];
   if(FILTERS.dateFrom||FILTERS.dateTo) {
     const now   = new Date();
-    const first = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0];
-    const last  = new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().split("T")[0];
-    const isCurMonth = FILTERS.dateFrom===first && FILTERS.dateTo===last;
-    const monthName  = now.toLocaleString("pt-BR",{month:"long",year:"numeric"});
-    const f = FILTERS.dateFrom ? fday(FILTERS.dateFrom+"T12:00:00") : "início";
-    const t = FILTERS.dateTo   ? fday(FILTERS.dateTo+"T12:00:00")   : "hoje";
-    const label = isCurMonth ? `📅 ${monthName.charAt(0).toUpperCase()+monthName.slice(1)}` : `📅 ${f} → ${t}`;
-    chips.push(`<div class="chip">${label} <button onclick="clearFilter('date')">✕</button></div>`);
+    const first = new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];
+    const last  = new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0];
+    const isCur = FILTERS.dateFrom===first && FILTERS.dateTo===last;
+    const mName = now.toLocaleString('pt-BR',{month:'long',year:'numeric'});
+    const f = FILTERS.dateFrom ? fday(FILTERS.dateFrom+'T12:00:00') : 'início';
+    const t = FILTERS.dateTo   ? fday(FILTERS.dateTo+'T12:00:00')   : 'hoje';
+    const lbl = isCur ? `📅 ${mName.charAt(0).toUpperCase()+mName.slice(1)}` : `📅 ${f} → ${t}`;
+    chips.push(`<div class="chip">${lbl} <button onclick="clearFilter('date')">✕</button></div>`);
   }
   if(FILTERS.driver) {
     const e = DATA.employees.find(e=>String(e.id)===FILTERS.driver);
     chips.push(`<div class="chip">👤 ${e?.firstName||FILTERS.driver} <button onclick="clearFilter('driver')">✕</button></div>`);
   }
-  if(FILTERS.vehicle) {
-    chips.push(`<div class="chip">🚗 ${FILTERS.vehicle} <button onclick="clearFilter('vehicle')">✕</button></div>`);
-  }
-  if(FILTERS.fuelType) {
-    chips.push(`<div class="chip">⛽ ${FILTERS.fuelType} <button onclick="clearFilter('fuelType')">✕</button></div>`);
-  }
-  if(STATUS!=="all") {
-    chips.push(`<div class="chip">${STATUS==="active"?"● Ativos":"○ Inativos"} <button onclick="clearFilter('status')">✕</button></div>`);
-  }
-  document.getElementById("chips").innerHTML = chips.join("");
+  if(FILTERS.vehicle)  chips.push(`<div class="chip">🚗 ${FILTERS.vehicle} <button onclick="clearFilter('vehicle')">✕</button></div>`);
+  if(FILTERS.fuelType) chips.push(`<div class="chip">⛽ ${FILTERS.fuelType} <button onclick="clearFilter('fuelType')">✕</button></div>`);
+  if(STATUS!=='all')   chips.push(`<div class="chip">${STATUS==='active'?'● Ativos':'○ Inativos'} <button onclick="clearFilter('status')">✕</button></div>`);
+  document.getElementById('chips').innerHTML = chips.join('');
 }
 
-// ════════════════════════════════════════════════
-// RADAR CANVAS
-// ════════════════════════════════════════════════
-function drawRadar() {
-  const cv = document.getElementById("radar");
-  if(!cv) return;
-  const x = cv.getContext("2d");
-  x.clearRect(0,0,26,26);
-  x.strokeStyle="#FF6B35"; x.lineWidth=0.8; x.setLineDash([2,2]);
-  x.beginPath(); x.arc(13,13,11,0,Math.PI*2); x.stroke();
-  x.setLineDash([]); x.globalAlpha=0.4; x.lineWidth=0.5;
-  x.beginPath(); x.arc(13,13,7,0,Math.PI*2); x.stroke();
-  x.globalAlpha=1; x.lineWidth=1.8; x.lineCap="round";
-  const r=(ANG-90)*Math.PI/180;
-  x.beginPath(); x.moveTo(13,13); x.lineTo(13+10*Math.cos(r),13+10*Math.sin(r)); x.stroke();
-  x.beginPath(); x.arc(13,13,2,0,Math.PI*2); x.fillStyle="#FF6B35"; x.fill();
-}
-setInterval(()=>{ ANG=(ANG+2)%360; drawRadar(); },30);
-drawRadar();
-
-// ════════════════════════════════════════════════
-// RENDER KPIs
-// ════════════════════════════════════════════════
+// ════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════
 function renderKPIs() {
-  const fRoutes  = filterRoutes(DATA.routes);
-  const fuelOk   = filterFuel(DATA.fuel).filter(f=>f.type!=="EXCLUIDO");
-  const totFuel  = fuelOk.reduce((s,f)=>s+Number(f.value||0),0);
-  const kmData   = calcKm(fRoutes);
-  const totKm    = kmData.reduce((s,v)=>s+Math.max(v.traveled,0),0);
-  const allEmp   = filterByStatus(DATA.employees);
-  const allVeh   = filterByStatus(DATA.vehicles);
+  const fRoutes = filterRoutes(DATA.routes);
+  const fuelOk  = filterFuel(DATA.fuel).filter(f=>f.type!=='EXCLUIDO');
+  const totFuel = fuelOk.reduce((s,f)=>s+Number(f.value||0),0);
+  const kmData  = calcKm(fRoutes);
+  const totKm   = kmData.reduce((s,v)=>s+Math.max(v.traveled,0),0);
+  const allEmp  = filterByStatus(DATA.employees);
+  const allVeh  = filterByStatus(DATA.vehicles);
 
-  document.getElementById("kpis").innerHTML = [
-    {lbl:"Motoristas",    val:allEmp.length,         sub:`${DATA.employees.filter(e=>e.active).length} ativos · ${DATA.employees.filter(e=>!e.active).length} inativos`, c:"var(--green)"},
-    {lbl:"Veículos",      val:allVeh.length,         sub:`${DATA.vehicles.filter(v=>v.active).length} ativos · ${DATA.vehicles.filter(v=>!v.active).length} inativos`,   c:"var(--blue)"},
-    {lbl:"Registros Rota",val:fRoutes.length,        sub:hasFilter()?"filtrado":"total registros",        c:"var(--purple)"},
-    {lbl:"KM no Período", val:`${fkm(totKm)} km`,    sub:hasFilter()?"período filtrado":"total período",  c:"var(--teal)",  sm:true},
-    {lbl:"Total Abastec.",val:`R$ ${fc(totFuel)}`,   sub:`${fuelOk.length} registros`,                    c:"var(--orange)",sm:true},
+  document.getElementById('kpis').innerHTML = [
+    {lbl:'Motoristas',    val:allEmp.length, sub:`${DATA.employees.filter(e=>e.active).length} ativos · ${DATA.employees.filter(e=>!e.active).length} inativos`, c:'var(--green)'},
+    {lbl:'Veículos',      val:allVeh.length, sub:`${DATA.vehicles.filter(v=>v.active).length} ativos · ${DATA.vehicles.filter(v=>!v.active).length} inativos`,   c:'var(--blue)'},
+    {lbl:'Registros Rota',val:fRoutes.length,sub:hasFilter()?'período filtrado':'total',  c:'var(--purple)'},
+    {lbl:'KM no Período', val:`${fkm(totKm)} km`, sub:hasFilter()?'período filtrado':'total período', c:'var(--teal)', sm:true},
+    {lbl:'Total Abastec.',val:`R$ ${fc(totFuel)}`, sub:`${fuelOk.length} registros`, c:'var(--orange)', sm:true},
   ].map(k=>`
     <div class="kcard" style="border-top-color:${k.c}">
       <div class="kval" style="color:${k.c};font-size:${k.sm?17:26}px">${k.val}</div>
       <div class="klbl">${k.lbl}</div>
       <div class="ksub">${k.sub}</div>
-    </div>`).join("");
+    </div>`).join('');
 }
 
-// ════════════════════════════════════════════════
-// RENDER KM SUMMARY
-// ════════════════════════════════════════════════
 function renderKmSummary() {
   const fRoutes = filterRoutes(DATA.routes);
   const kmData  = calcKm(fRoutes);
-  if(!kmData.length) { document.getElementById("kmSummary").innerHTML=""; return; }
-
-  document.getElementById("kmSummary").innerHTML = `
+  if(!kmData.length){ document.getElementById('kmSummary').innerHTML=''; return; }
+  document.getElementById('kmSummary').innerHTML = `
     <div class="km-box">
-      <div class="km-title">📊 KM rodados por veículo — ${hasFilter()?"período filtrado":"total registrado"} · odômetro final − inicial</div>
+      <div class="km-title">📊 KM rodados por veículo — odômetro final − inicial</div>
       <div class="km-grid">
         ${kmData.map(v=>{
-          const clr = v.traveled>500?"var(--green)":v.traveled>0?"var(--amber)":"var(--text3)";
+          const clr = v.traveled>500?'var(--green)':v.traveled>0?'var(--amber)':'var(--text3)';
           return `<div class="km-card">
-            <div class="km-plate">${v.plate}</div>
-            <div class="km-model">${v.brand} ${v.model}</div>
-            <div class="km-val" style="color:${clr}">${v.traveled>0?"+"+fkm(v.traveled)+" km":"sem variação"}</div>
-            <div class="km-sub">${v.stops} parada${v.stops!==1?"s":""}</div>
-            <div class="km-foot">
+            <div style="font-size:16px;font-weight:700;color:var(--orange);letter-spacing:.08em">${v.plate}</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:1px">${v.brand} ${v.model}</div>
+            <div style="font-size:22px;font-weight:700;color:${clr};margin-top:8px">${v.traveled>0?'+'+fkm(v.traveled)+' km':'sem variação'}</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">${v.stops} parada${v.stops!==1?'s':''}</div>
+            <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--text3);border-top:1px solid var(--border);padding-top:7px">
               <span>Início: <strong style="color:var(--text2)">${fkm(v.firstKm)} km</strong></span>
               <span>Fim: <strong style="color:var(--text2)">${fkm(v.lastKm)} km</strong></span>
             </div>
             <div style="font-size:11px;color:var(--text3);margin-top:4px">${fday(v.firstDate)} → ${fday(v.lastDate)}</div>
           </div>`;
-        }).join("")}
+        }).join('')}
       </div>
     </div>`;
 }
 
-// ════════════════════════════════════════════════
-// RENDER TABS
-// ════════════════════════════════════════════════
 function renderTabs() {
   const fRoutes = filterRoutes(DATA.routes);
-  const fuelOk  = filterFuel(DATA.fuel).filter(f=>f.type!=="EXCLUIDO");
+  const fuelOk  = filterFuel(DATA.fuel).filter(f=>f.type!=='EXCLUIDO');
   const allEmp  = filterByStatus(DATA.employees);
   const allVeh  = filterByStatus(DATA.vehicles);
-  document.getElementById("tabs").innerHTML = [
-    {id:"overview",label:`Visão Geral`},
-    {id:"drivers", label:`Motoristas (${allEmp.length})`},
-    {id:"fleet",   label:`Frota (${allVeh.length})`},
-    {id:"fuel",    label:`Abastecimento (${fuelOk.length})`},
-    {id:"routes",  label:`Rotas (${fRoutes.length})`},
-  ].map(t=>`<button class="tab${TAB===t.id?" active":""}" onclick="setTab('${t.id}')">${t.label}</button>`).join("");
+  document.getElementById('tabs').innerHTML = [
+    {id:'overview',label:'Visão Geral'},
+    {id:'drivers', label:`Motoristas (${allEmp.length})`},
+    {id:'fleet',   label:`Frota (${allVeh.length})`},
+    {id:'fuel',    label:`Abastecimento (${fuelOk.length})`},
+    {id:'routes',  label:`Rotas (${fRoutes.length})`},
+  ].map(t=>`<button class="tab${TAB===t.id?' active':''}" onclick="setTab('${t.id}')">${t.label}</button>`).join('');
 }
 
-// ════════════════════════════════════════════════
-// RENDER CONTENT
-// ════════════════════════════════════════════════
 function renderContent() {
   const fRoutes = filterRoutes(DATA.routes);
   const fFuel   = filterFuel(DATA.fuel);
-  const fuelOk  = fFuel.filter(f=>f.type!=="EXCLUIDO");
+  const fuelOk  = fFuel.filter(f=>f.type!=='EXCLUIDO');
   const totFuel = fuelOk.reduce((s,f)=>s+Number(f.value||0),0);
-  const allEmp  = filterByStatus(DATA.employees);
-  const allVeh  = filterByStatus(DATA.vehicles);
 
   const byDrv={},byVeh={},byType={};
   fuelOk.forEach(f=>{
     const k=`${f.driver?.firstName} ${f.driver?.lastName}`;
     byDrv[k]=(byDrv[k]||0)+Number(f.value||0);
-    const p=f.vehicle?.plateNumber||"?";
+    const p=f.vehicle?.plateNumber||'?';
     byVeh[p]=(byVeh[p]||0)+Number(f.value||0);
     byType[f.type]=(byType[f.type]||0)+Number(f.value||0);
   });
@@ -586,24 +565,23 @@ function renderContent() {
   const kmByPlate={};
   calcKm(fRoutes).forEach(v=>{ kmByPlate[v.plate]=v; });
 
-  let html = "";
+  let html = '';
 
-  // ── OVERVIEW ────────────────────────────────
-  if(TAB==="overview") {
-    const shownEmp = allEmp.length ? allEmp : DATA.employees.filter(e=>e.active);
+  if(TAB==='overview') {
+    const actEmp = DATA.employees.filter(e=>e.active);
     html += `<div class="g2">
     <div class="sec">
       <div class="sh"><span class="st">Última posição · motoristas</span></div>` +
-      shownEmp.map(e=>{
+      actEmp.map(e=>{
         const p    = fRoutes.filter(r=>r.driver?.id===e.id).sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
         const days = p ? dAgo(p.date) : 999;
-        const dotC = days===0?"var(--green)":days<=2?"var(--amber)":"var(--red)";
-        return `<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(36,42,56,.4);${!e.active?"opacity:.55":""}">
-          <div class="av${e.active?"":" inactive"}">${ini(e.firstName+" "+e.lastName)}</div>
+        const dotC = days===0?'var(--green)':days<=2?'var(--amber)':'var(--red)';
+        return `<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(36,42,56,.4)">
+          <div class="av">${ini(e.firstName+' '+e.lastName)}</div>
           <div style="flex:1">
             <div style="display:flex;align-items:center;gap:8px">
               <span style="font-size:14px;font-weight:600">${e.firstName} ${e.lastName}</span>
-              ${statusBdg(e.active)}
+              ${sBdg(e.active)}
             </div>
             <div style="font-size:12px;color:var(--text2);margin-top:2px">
               ${p?`<span class="dot" style="background:${dotC}"></span>${fdt(p.date)} · ${fkm(p.km)} km`:`<span style="color:var(--text3)">Sem rota registrada</span>`}
@@ -611,28 +589,24 @@ function renderContent() {
           </div>
           ${p?`<div style="text-align:right">
             <a href="${p.address}" target="_blank" class="mbtn">Ver mapa ↗</a>
-            ${days>3?`<div style="font-size:11px;color:var(--red);margin-top:4px">⚠ ${days}d sem rota</div>`:""}
-          </div>`:""}
+            ${days>3?`<div style="font-size:11px;color:var(--red);margin-top:4px">⚠ ${days}d sem rota</div>`:''}
+          </div>`:''}
         </div>`;
-      }).join("") + `</div>
-
+      }).join('') +
+      `</div>
     <div class="sec">
-      <div class="sh">
-        <span class="st">Abastecimento por motorista</span>
-        <span style="font-size:12px;color:var(--text2)">R$ ${fc(totFuel)}</span>
-      </div>
+      <div class="sh"><span class="st">Abastecimento por motorista</span><span style="font-size:12px;color:var(--text2)">R$ ${fc(totFuel)}</span></div>
       <div style="padding:16px;display:flex;flex-direction:column;gap:13px">
         ${drvList.length ? drvList.map(([n,v])=>`
           <div>
             <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px">
-              <span>${n.split(" ")[0]} ${n.split(" ").slice(-1)[0]}</span>
+              <span>${n.split(' ')[0]} ${n.split(' ').slice(-1)[0]}</span>
               <span style="color:var(--amber);font-weight:700">R$ ${fc(v)}</span>
             </div>
-            ${bar((v/maxD)*100,"var(--amber)")}
-          </div>`).join("") : "<div class='empty'>Nenhum registro no período</div>"}
+            ${bar((v/maxD)*100,'var(--amber)')}
+          </div>`).join('') : `<div class="empty">Nenhum registro no período</div>`}
       </div>
     </div></div>
-
     <div class="g2" style="margin-top:14px">
     <div class="sec">
       <div class="sh"><span class="st">Por tipo de abastecimento</span></div>
@@ -644,7 +618,7 @@ function renderContent() {
               <span style="font-size:13px;color:${tc(tp)};font-weight:700">R$ ${fc(v)}</span>
             </div>
             ${bar((v/totFuel)*100,tc(tp))}
-          </div>`).join("") : "<div class='empty'>Nenhum registro</div>"}
+          </div>`).join('') : `<div class="empty">Nenhum registro</div>`}
       </div>
     </div>
     <div class="sec">
@@ -656,145 +630,103 @@ function renderContent() {
               <span style="color:var(--orange);font-weight:700">${p}</span>
               <span style="color:var(--text2)">R$ ${fc(v)}</span>
             </div>
-            ${bar((v/maxV)*100,"var(--orange)")}
-          </div>`).join("") : "<div class='empty'>Nenhum registro</div>"}
+            ${bar((v/maxV)*100,'var(--orange)')}
+          </div>`).join('') : `<div class="empty">Nenhum registro</div>`}
       </div>
     </div></div>`;
   }
 
-  // ── DRIVERS ─────────────────────────────────
-  if(TAB==="drivers") {
+  if(TAB==='drivers') {
     const activeEmp   = DATA.employees.filter(e=>e.active);
     const inactiveEmp = DATA.employees.filter(e=>!e.active);
-    const showActive  = STATUS!=="inactive";
-    const showInact   = STATUS!=="active";
-
-    html += "<div>";
-    if(showActive && activeEmp.length) {
+    html += '<div>';
+    if(STATUS!=='inactive' && activeEmp.length) {
       html += `<div class="group-header"><span class="dot" style="background:var(--green)"></span>Ativos (${activeEmp.length})</div>
-      <div class="g3" style="padding:14px;gap:12px">
-        ${activeEmp.map(e => driverCard(e, fRoutes, byDrv, kmByPlate)).join("")}
-      </div>`;
+      <div class="g3" style="padding:14px;gap:12px">${activeEmp.map(e=>driverCard(e,fRoutes,byDrv,kmByPlate)).join('')}</div>`;
     }
-    if(showInact && inactiveEmp.length) {
+    if(STATUS!=='active' && inactiveEmp.length) {
       html += `<div class="group-header" style="margin-top:4px"><span class="dot" style="background:var(--inactive)"></span>Inativos (${inactiveEmp.length})</div>
-      <div class="g3" style="padding:14px;gap:12px">
-        ${inactiveEmp.map(e => driverCard(e, fRoutes, byDrv, kmByPlate)).join("")}
-      </div>`;
+      <div class="g3" style="padding:14px;gap:12px">${inactiveEmp.map(e=>driverCard(e,fRoutes,byDrv,kmByPlate)).join('')}</div>`;
     }
-    if(!showActive && !showInact) html += "<div class='empty'>Selecione um status para visualizar</div>";
-    html += "</div>";
+    html += '</div>';
   }
 
-  // ── FLEET ────────────────────────────────────
-  if(TAB==="fleet") {
+  if(TAB==='fleet') {
     const activeVeh   = DATA.vehicles.filter(v=>v.active);
     const inactiveVeh = DATA.vehicles.filter(v=>!v.active);
-    const showActive  = STATUS!=="inactive";
-    const showInact   = STATUS!=="active";
-
-    html += "<div>";
-    if(showActive && activeVeh.length) {
+    html += '<div>';
+    if(STATUS!=='inactive' && activeVeh.length) {
       html += `<div class="group-header"><span class="dot" style="background:var(--green)"></span>Ativos (${activeVeh.length})</div>
-      <div class="g3" style="padding:14px;gap:12px">
-        ${activeVeh.map(v => vehicleCard(v, byVeh, kmByPlate)).join("")}
-      </div>`;
+      <div class="g3" style="padding:14px;gap:12px">${activeVeh.map(v=>vehicleCard(v,byVeh,kmByPlate)).join('')}</div>`;
     }
-    if(showInact && inactiveVeh.length) {
+    if(STATUS!=='active' && inactiveVeh.length) {
       html += `<div class="group-header" style="margin-top:4px"><span class="dot" style="background:var(--inactive)"></span>Inativos (${inactiveVeh.length})</div>
-      <div class="g3" style="padding:14px;gap:12px">
-        ${inactiveVeh.map(v => vehicleCard(v, byVeh, kmByPlate)).join("")}
-      </div>`;
+      <div class="g3" style="padding:14px;gap:12px">${inactiveVeh.map(v=>vehicleCard(v,byVeh,kmByPlate)).join('')}</div>`;
     }
-    html += "</div>";
+    html += '</div>';
   }
 
-  // ── FUEL ─────────────────────────────────────
-  if(TAB==="fuel") {
+  if(TAB==='fuel') {
     html += `<div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
       ${Object.entries(byType).map(([tp,v])=>`
         <div class="vcard" style="display:flex;gap:10px;align-items:center;padding:10px 14px;border-radius:8px">
-          ${bdg(tp,tc(tp))}
-          <span style="font-size:14px;font-weight:700;color:${tc(tp)}">R$ ${fc(v)}</span>
-        </div>`).join("")}
+          ${bdg(tp,tc(tp))}<span style="font-size:14px;font-weight:700;color:${tc(tp)}">R$ ${fc(v)}</span>
+        </div>`).join('')}
       <div class="vcard" style="padding:10px 14px;margin-left:auto;display:flex;gap:10px;align-items:center;border-radius:8px">
         <span style="font-size:12px;color:var(--text2)">Total</span>
         <span style="font-size:16px;font-weight:700;color:var(--orange)">R$ ${fc(totFuel)}</span>
-      </div>
-    </div>
+      </div></div>
     <div class="sec"><table>
-      <thead><tr>
-        <th>Data</th><th>Tipo</th><th>Motorista</th><th>Veículo</th><th>Combustível</th><th>Odômetro</th><th>Valor</th>
-      </tr></thead><tbody>
-      ${fFuel.length ? fFuel.map(f=>`
-        <tr class="${f.type==="EXCLUIDO"?"inactive-row":""}">
+      <thead><tr><th>Data</th><th>Tipo</th><th>Motorista</th><th>Veículo</th><th>Combustível</th><th>Odômetro</th><th>Valor</th></tr></thead>
+      <tbody>${fFuel.length ? fFuel.map(f=>`
+        <tr class="${f.type==='EXCLUIDO'?'inactive-row':''}">
           <td style="color:var(--text2);font-size:12px">${fday(f.date)}</td>
           <td>${bdg(f.type,tc(f.type))}</td>
-          <td>${f.driver?.firstName} ${f.driver?.lastName?.split(" ")[0]||""}</td>
-          <td>
-            <span style="color:var(--orange);font-weight:700">${f.vehicle?.plateNumber}</span>
-            <span style="color:var(--text3);font-size:12px;margin-left:6px">${f.vehicle?.model}</span>
-          </td>
-          <td>${bdg(f.fuel?.description||"–","var(--teal)")}</td>
+          <td>${f.driver?.firstName} ${f.driver?.lastName?.split(' ')[0]||''}</td>
+          <td><span style="color:var(--orange);font-weight:700">${f.vehicle?.plateNumber}</span> <span style="color:var(--text3);font-size:12px">${f.vehicle?.model}</span></td>
+          <td>${bdg(f.fuel?.description||'–','var(--teal)')}</td>
           <td style="color:var(--text2)">${fkm(f.km)} km</td>
-          <td style="font-weight:700;color:${f.type==="EXCLUIDO"?"var(--text3)":"var(--amber)"}">
-            ${f.type==="EXCLUIDO"?"–":"R$ "+fc(f.value)}
-          </td>
-        </tr>`).join("") : `<tr><td colspan="7"><div style="text-align:center;padding:32px;color:var(--text3)">
-  <div style="font-size:28px;margin-bottom:10px">⛽</div>
-  <div style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:6px">Nenhum abastecimento no período selecionado</div>
-  <div style="font-size:13px">O último registro é de fevereiro/2026. Clique em <strong style="color:var(--text2)">✕ Limpar tudo</strong> para ver o histórico completo.</div>
-</div></td></tr>`}
+          <td style="font-weight:700;color:${f.type==='EXCLUIDO'?'var(--text3)':'var(--amber)'}">
+            ${f.type==='EXCLUIDO'?'–':'R$ '+fc(f.value)}</td>
+        </tr>`).join('') : `<tr><td colspan="7" class="empty">Nenhum registro no período</td></tr>`}
       </tbody></table></div>`;
   }
 
-  // ── ROUTES ───────────────────────────────────
-  if(TAB==="routes") {
+  if(TAB==='routes') {
     html += `<div class="sec"><table>
-      <thead><tr>
-        <th>Data / Hora</th><th>Motorista</th><th>Veículo</th><th>Placa</th><th>Odômetro</th><th>Status</th><th>GPS</th>
-      </tr></thead><tbody>
-      ${fRoutes.length ? fRoutes.map(r=>`
+      <thead><tr><th>Data / Hora</th><th>Motorista</th><th>Veículo</th><th>Placa</th><th>Odômetro</th><th>Status</th><th>GPS</th></tr></thead>
+      <tbody>${fRoutes.length ? fRoutes.map(r=>`
         <tr>
           <td style="color:var(--text2);font-size:12px;white-space:nowrap">${fdt(r.date)}</td>
-          <td>
-            <div style="display:flex;align-items:center;gap:8px">
-              <div class="av av-sm">${ini(r.driver?.firstName+" "+r.driver?.lastName)}</div>
-              ${r.driver?.firstName} ${r.driver?.lastName?.split(" ")[0]||""}
-            </div>
-          </td>
+          <td><div style="display:flex;align-items:center;gap:8px">
+            <div class="av av-sm">${ini(r.driver?.firstName+' '+r.driver?.lastName)}</div>
+            ${r.driver?.firstName} ${r.driver?.lastName?.split(' ')[0]||''}
+          </div></td>
           <td style="color:var(--text2)">${r.vehicle?.brand} ${r.vehicle?.model}</td>
           <td style="font-weight:700;color:var(--orange)">${r.vehicle?.plateNumber}</td>
           <td>${fkm(r.km)} km</td>
-          <td>${bdg("OK","var(--green)")}</td>
+          <td>${bdg('OK','var(--green)')}</td>
           <td><a href="${r.address}" target="_blank" class="mbtn">${r.lat?.toFixed(3)}, ${r.lon?.toFixed(3)} ↗</a></td>
-        </tr>`).join("") : `<tr><td colspan="7"><div style="text-align:center;padding:32px;color:var(--text3)">
-  <div style="font-size:28px;margin-bottom:10px">🗺️</div>
-  <div style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:6px">Nenhuma rota registrada no período</div>
-  <div style="font-size:13px">Ajuste o período ou clique em <strong style="color:var(--text2)">✕ Limpar tudo</strong> para ver todo o histórico.</div>
-</div></td></tr>`}
+        </tr>`).join('') : `<tr><td colspan="7" class="empty">Nenhuma rota no período</td></tr>`}
       </tbody></table></div>`;
   }
 
-  document.getElementById("content").innerHTML = html;
+  document.getElementById('content').innerHTML = html;
 }
 
-// ── CARD HELPERS ────────────────────────────────
 function driverCard(e, fRoutes, byDrv, kmByPlate) {
   const p    = fRoutes.filter(r=>r.driver?.id===e.id).sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
   const fv   = byDrv[`${e.firstName} ${e.lastName}`]||0;
   const days = p ? dAgo(p.date) : 999;
   const kmV  = (e.vehicles||[]).map(v=>kmByPlate[v.plateNumber]).filter(Boolean);
   const totKm= kmV.reduce((s,v)=>s+Math.max(v.traveled,0),0);
-
-  return `<div class="dcard${e.active?"":" inactive"}">
+  return `<div class="dcard${e.active?'':' inactive'}">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-      <div class="av${e.active?"":" inactive"}">${ini(e.firstName+" "+e.lastName)}</div>
+      <div class="av${e.active?'':' inactive'}">${ini(e.firstName+' '+e.lastName)}</div>
       <div style="flex:1">
         <div style="font-size:14px;font-weight:600">${e.firstName}</div>
         <div style="font-size:12px;color:var(--text2)">${e.lastName}</div>
-      </div>
-      ${statusBdg(e.active)}
+      </div>${sBdg(e.active)}
     </div>
     <div style="margin-bottom:12px">
       <div style="font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--text3);margin-bottom:6px">VEÍCULOS VINCULADOS</div>
@@ -803,25 +735,20 @@ function driverCard(e, fRoutes, byDrv, kmByPlate) {
           <span style="color:var(--orange);font-weight:700">${v.plateNumber}</span>
           <span style="color:var(--text2)">${v.model}</span>
           <span style="color:var(--text3);font-size:12px">${fkm(v.km)} km</span>
-        </div>`).join("")||`<span style="font-size:13px;color:var(--text3)">Sem veículo</span>`}
+        </div>`).join('')||`<span style="font-size:13px;color:var(--text3)">Sem veículo</span>`}
     </div>
     <div class="div-line">
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
-        <div>
-          <div style="font-size:11px;color:var(--text3);margin-bottom:2px">ABAST.</div>
-          <div style="font-size:13px;color:var(--amber);font-weight:700">R$ ${fc(fv)}</div>
-        </div>
-        <div>
-          <div style="font-size:11px;color:var(--text3);margin-bottom:2px">KM PERÍODO</div>
-          <div style="font-size:13px;color:var(--teal);font-weight:700">${totKm>0?"+"+fkm(totKm):"–"} km</div>
-        </div>
-        <div>
-          <div style="font-size:11px;color:var(--text3);margin-bottom:2px">ÚLTIMA ROTA</div>
+        <div><div style="font-size:11px;color:var(--text3);margin-bottom:2px">ABAST.</div>
+          <div style="font-size:13px;color:var(--amber);font-weight:700">R$ ${fc(fv)}</div></div>
+        <div><div style="font-size:11px;color:var(--text3);margin-bottom:2px">KM PERÍODO</div>
+          <div style="font-size:13px;color:var(--teal);font-weight:700">${totKm>0?'+'+fkm(totKm):'–'} km</div></div>
+        <div><div style="font-size:11px;color:var(--text3);margin-bottom:2px">ÚLTIMA ROTA</div>
           ${p?`<a href="${p.address}" target="_blank" class="mbtn" style="font-size:11px">${fday(p.date)} ↗</a>`:`<span style="font-size:12px;color:var(--text3)">–</span>`}
         </div>
       </div>
-      ${e.active && days>3 ? `<div class="alert-red">⚠ ${days} dias sem registrar rota</div>` : ""}
-      ${!e.active ? `<div class="alert-amber">○ Motorista inativo — sem acesso ao sistema</div>` : ""}
+      ${e.active && days>3 ? `<div class="alert-red">⚠ ${days} dias sem registrar rota</div>`:''}
+      ${!e.active ? `<div class="alert-amber">○ Motorista inativo</div>`:''}
     </div>
   </div>`;
 }
@@ -831,48 +758,37 @@ function vehicleCard(v, byVeh, kmByPlate) {
   const kmV = kmByPlate[v.plateNumber];
   const al  = v.km>200000, al2 = v.km>150000;
   const cpk = kmV?.traveled>0 ? fv/kmV.traveled : 0;
-
-  return `<div class="vcard${v.active?"":" inactive"}" style="border-top:3px solid ${v.active?"var(--blue)":"var(--inactive)"}">
+  return `<div class="vcard${v.active?'':' inactive'}" style="border-top:3px solid ${v.active?'var(--blue)':'var(--inactive)'}">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
       <div>
         <div style="font-size:17px;font-weight:700;color:var(--orange);letter-spacing:.08em">${v.plateNumber}</div>
         <div style="font-size:12px;color:var(--text2);margin-top:1px">${v.brand} ${v.model} · ${v.year}</div>
-      </div>
-      ${statusBdg(v.active)}
+      </div>${sBdg(v.active)}
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
-      ${[["Cor",v.color||"–"],["Combust.",v.fuel?.description||"–"],["GNV",v.hasGNV?"Sim":"Não"],["Ano",v.year]].map(([l,val])=>
+      ${[['Cor',v.color||'–'],['Combust.',v.fuel?.description||'–'],['GNV',v.hasGNV?'Sim':'Não'],['Ano',v.year]].map(([l,val])=>
         `<div><div style="font-size:11px;color:var(--text3);font-weight:600">${l}</div><div style="font-size:13px;margin-top:1px">${val}</div></div>`
-      ).join("")}
+      ).join('')}
     </div>
     <div class="div-line">
       <div style="display:flex;justify-content:space-between;margin-bottom:4px">
         <span style="font-size:12px;color:var(--text2)">Odômetro</span>
-        <span style="font-size:14px;font-weight:700;color:${al?"var(--red)":al2?"var(--amber)":"var(--text)"}">${fkm(v.km)} km</span>
+        <span style="font-size:14px;font-weight:700;color:${al?'var(--red)':al2?'var(--amber)':'var(--text)'}">${fkm(v.km)} km</span>
       </div>
-      ${al?`<div class="alert-red">⚠ KM elevada — revisão necessária</div>`:al2?`<div class="alert-amber">⚡ Acima de 150.000 km</div>`:""}
-      ${bar(Math.min((v.km/250000)*100,100),al?"var(--red)":al2?"var(--amber)":"var(--blue)")}
+      ${al?`<div class="alert-red">⚠ KM elevada — revisão necessária</div>`:al2?`<div class="alert-amber">⚡ Acima de 150.000 km</div>`:''}
+      ${bar(Math.min((v.km/250000)*100,100),al?'var(--red)':al2?'var(--amber)':'var(--blue)')}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
-        <div>
-          <div style="font-size:11px;color:var(--text3)">Abastecimento</div>
-          <div style="font-size:13px;color:var(--amber);font-weight:700;margin-top:1px">R$ ${fc(fv)}</div>
-        </div>
-        ${kmV?`<div>
-          <div style="font-size:11px;color:var(--text3)">KM período</div>
-          <div style="font-size:13px;color:var(--teal);font-weight:700;margin-top:1px">+${fkm(kmV.traveled)} km</div>
-        </div>`:""}
-        ${cpk>0?`<div style="grid-column:1/-1">
-          <div style="font-size:11px;color:var(--text3)">Custo por km</div>
-          <div style="font-size:13px;margin-top:1px">R$ ${cpk.toFixed(2)}/km</div>
-        </div>`:""}
+        <div><div style="font-size:11px;color:var(--text3)">Abastecimento</div>
+          <div style="font-size:13px;color:var(--amber);font-weight:700;margin-top:1px">R$ ${fc(fv)}</div></div>
+        ${kmV?`<div><div style="font-size:11px;color:var(--text3)">KM período</div>
+          <div style="font-size:13px;color:var(--teal);font-weight:700;margin-top:1px">+${fkm(kmV.traveled)} km</div></div>`:''}
+        ${cpk>0?`<div style="grid-column:1/-1"><div style="font-size:11px;color:var(--text3)">Custo por km</div>
+          <div style="font-size:13px;margin-top:1px">R$ ${cpk.toFixed(2)}/km</div></div>`:''}
       </div>
     </div>
   </div>`;
 }
 
-// ════════════════════════════════════════════════
-// MAIN RENDER & TAB
-// ════════════════════════════════════════════════
 function setTab(t) { TAB=t; renderTabs(); renderContent(); }
 
 function render() {
@@ -882,85 +798,8 @@ function render() {
   renderContent();
 }
 
-
-// ════════════════════════════════════════════════
-// INIT — carrega com mês corrente por padrão
-// ════════════════════════════════════════════════
-function setCurrentMonth() {
-  const now   = new Date();
-  const first = new Date(now.getFullYear(), now.getMonth(), 1);
-  const last  = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-  const fmt   = d => d.toISOString().split("T")[0];
-  FILTERS.dateFrom = fmt(first);
-  FILTERS.dateTo   = fmt(last);
-  document.getElementById("fDateFrom").value = FILTERS.dateFrom;
-  document.getElementById("fDateTo").value   = FILTERS.dateTo;
-  renderChips();
-  render();
-}
-
-function syncData() {
-  // Detecta ambiente e age diferente
-  if(location.protocol === "file:") {
-    showSyncBanner(
-      "warn",
-      "Arquivo aberto localmente — dados em cache de 19/04/2026. " +
-      "Para dados em tempo real, publique no <strong>GitHub Pages</strong> ou <strong>Netlify</strong> e acesse via URL."
-    );
-    return;
-  }
-  // Hospedado em servidor — faz fetch real
-  const badge = document.getElementById("syncBadge");
-  badge.textContent = "⟳ Atualizando...";
-  badge.className = "badge badge-cache";
-  Promise.all([
-    fetch("https://log.rradar.com.br/employee/find/all").then(r=>r.json()),
-    fetch("https://log.rradar.com.br/vehicle/find/all").then(r=>r.json()),
-    fetch("https://log.rradar.com.br/fuelhistory/find/all").then(r=>r.json()),
-    fetch("https://log.rradar.com.br/route/find/all").then(r=>r.json()),
-  ]).then(([emp,veh,fuel,routes]) => {
-    DATA = {employees:emp, vehicles:veh, fuel, routes};
-    const now = new Date();
-    badge.className = "badge badge-live";
-    badge.textContent = "⬤ Atualizado " + now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-    hideSyncBanner();
-    populateFilters();
-    render();
-  }).catch(() => {
-    badge.className = "badge badge-cache";
-    badge.textContent = "📦 Cache · 19/04/2026";
-    showSyncBanner("error", "Falha ao conectar com as APIs. Exibindo dados em cache.");
-  });
-}
-
-function showSyncBanner(type, msg) {
-  let el = document.getElementById("syncBanner");
-  if(!el) {
-    el = document.createElement("div");
-    el.id = "syncBanner";
-    document.querySelector(".fbar").after(el);
-  }
-  const colors = {
-    warn:  {bg:"rgba(251,191,36,.08)",  border:"rgba(251,191,36,.3)",  text:"#FBBF24"},
-    error: {bg:"rgba(248,113,113,.08)", border:"rgba(248,113,113,.3)", text:"#F87171"},
-    info:  {bg:"rgba(91,156,246,.08)",  border:"rgba(91,156,246,.3)",  text:"#5B9CF6"},
-  };
-  const c = colors[type] || colors.info;
-  el.style.cssText = `padding:10px 24px;background:${c.bg};border-bottom:1px solid ${c.border};font-size:13px;color:${c.text};display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:35`;
-  el.innerHTML = `<span>${msg}</span><button onclick="hideSyncBanner()" style="background:none;border:none;color:${c.text};cursor:pointer;font-size:16px;line-height:1;opacity:.7">✕</button>`;
-}
-
-function hideSyncBanner() {
-  const el = document.getElementById("syncBanner");
-  if(el) el.remove();
-}
-
-populateFilters();
-renderChips();
-render();
-// Tenta sync automático ao carregar (só funciona se hospedado)
-if(location.protocol !== "file:") syncData();
-
+// INIT — carrega dados das APIs ao abrir
+loadData();
 </script>
 </body>
 </html>
