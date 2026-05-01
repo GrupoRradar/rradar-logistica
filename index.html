@@ -366,29 +366,17 @@ async function loadData() {
 // FILTER LOGIC
 // ════════════════════════════════════════
 function filterRoutes(routes) {
-  const actIds = DATA ? new Set(DATA.employees.filter(e=>e.active).map(e=>String(e.id))) : null;
-  const inactIds = DATA ? new Set(DATA.employees.filter(e=>!e.active).map(e=>String(e.id))) : null;
-  const actPl = DATA ? new Set(DATA.vehicles.filter(v=>v.active).map(v=>v.plateNumber)) : null;
-  const inactPl = DATA ? new Set(DATA.vehicles.filter(v=>!v.active).map(v=>v.plateNumber)) : null;
   return routes.filter(r => {
     const d = new Date(r.date);
     if(FILTERS.dateFrom && d < new Date(FILTERS.dateFrom+'T00:00:00-03:00')) return false;
     if(FILTERS.dateTo   && d > new Date(FILTERS.dateTo+'T23:59:59-03:00')) return false;
     if(FILTERS.driver   && String(r.driver?.id) !== FILTERS.driver) return false;
     if(FILTERS.vehicle  && r.vehicle?.plateNumber !== FILTERS.vehicle) return false;
-    if(STATUS==='active'   && actIds   && !actIds.has(String(r.driver?.id))) return false;
-    if(STATUS==='inactive' && inactIds && !inactIds.has(String(r.driver?.id))) return false;
-    if(STATUS==='active'   && actPl   && !actPl.has(r.vehicle?.plateNumber)) return false;
-    if(STATUS==='inactive' && inactPl && !inactPl.has(r.vehicle?.plateNumber)) return false;
     return true;
   });
 }
 
 function filterFuel(fuel) {
-  const actIds  = DATA ? new Set(DATA.employees.filter(e=>e.active).map(e=>String(e.id))) : null;
-  const inactIds= DATA ? new Set(DATA.employees.filter(e=>!e.active).map(e=>String(e.id))) : null;
-  const actPl   = DATA ? new Set(DATA.vehicles.filter(v=>v.active).map(v=>v.plateNumber)) : null;
-  const inactPl = DATA ? new Set(DATA.vehicles.filter(v=>!v.active).map(v=>v.plateNumber)) : null;
   return fuel.filter(f => {
     const d = f.date.includes('T') ? new Date(f.date) : new Date(f.date+'T12:00:00-03:00');
     if(FILTERS.dateFrom  && d < new Date(FILTERS.dateFrom+'T00:00:00-03:00')) return false;
@@ -396,10 +384,6 @@ function filterFuel(fuel) {
     if(FILTERS.driver    && String(f.driver?.id) !== FILTERS.driver) return false;
     if(FILTERS.vehicle   && f.vehicle?.plateNumber !== FILTERS.vehicle) return false;
     if(FILTERS.fuelType  && f.type !== FILTERS.fuelType) return false;
-    if(STATUS==='active'   && actIds   && !actIds.has(String(f.driver?.id))) return false;
-    if(STATUS==='inactive' && inactIds && !inactIds.has(String(f.driver?.id))) return false;
-    if(STATUS==='active'   && actPl   && !actPl.has(f.vehicle?.plateNumber)) return false;
-    if(STATUS==='inactive' && inactPl && !inactPl.has(f.vehicle?.plateNumber)) return false;
     return true;
   });
 }
