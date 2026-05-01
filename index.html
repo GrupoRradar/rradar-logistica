@@ -197,13 +197,19 @@ tr.inactive-row td{opacity:.5}
 
 <script>
 // ════════════════════════════════════════
-// APIs
+// APIs — detecta ambiente automaticamente
 // ════════════════════════════════════════
-const APIS = {
+const ON_SERVER = ['rradar.com.br','rradar.ai'].some(d => window.location.hostname.includes(d));
+const APIS = ON_SERVER ? {
   employees: '/api/employees',
   vehicles:  '/api/vehicles',
   fuel:      '/api/fuel',
   routes:    '/api/routes'
+} : {
+  employees: 'https://log.rradar.com.br/employee/find/all',
+  vehicles:  'https://log.rradar.com.br/vehicle/find/all',
+  fuel:      'https://log.rradar.com.br/fuelhistory/find/all',
+  routes:    'https://log.rradar.com.br/route/find/all'
 };
 
 // ════════════════════════════════════════
@@ -220,8 +226,8 @@ let ANG     = 0;
 // ════════════════════════════════════════
 const fc   = v => Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fkm  = v => Number(v||0).toLocaleString('pt-BR');
-const fdt  = s => { if(!s) return '–'; return new Date(s).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}); };
-const fday = s => { if(!s) return '–'; return new Date(s).toLocaleDateString('pt-BR'); };
+const fdt  = s => { if(!s) return '–'; return new Date(s).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit',timeZone:'America/Sao_Paulo'}); };
+const fday = s => { if(!s) return '–'; if(s.length===10){ const [y,m,d]=s.split('-'); return d+'/'+m+'/'+y; } return new Date(s).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'}); };
 const ini  = n => (n||'').split(' ').filter((_,i,a)=>i===0||i===a.length-1).map(w=>w[0]).join('').toUpperCase()||'?';
 const dAgo = s => { if(!s) return 999; return Math.floor((Date.now()-new Date(s))/86400000); };
 const FCLR = {'REEMBOLSO':'#FBBF24','VALE OLIVEIRENSE':'#5B9CF6','EXCLUIDO':'#636C82','DIRETO':'#4ADE80'};
@@ -321,8 +327,8 @@ async function loadData() {
 function filterRoutes(routes) {
   return routes.filter(r => {
     const d = new Date(r.date);
-    if(FILTERS.dateFrom && d < new Date(FILTERS.dateFrom)) return false;
-    if(FILTERS.dateTo   && d > new Date(FILTERS.dateTo+'T23:59:59')) return false;
+    if(FILTERS.dateFrom && d < new Date(FILTERS.dateFrom+'T00:00:00-03:00')) return false;
+    if(FILTERS.dateTo   && d > new Date(FILTERS.dateTo+'T23:59:59-03:00')) return false;
     if(FILTERS.driver   && String(r.driver?.id) !== FILTERS.driver) return false;
     if(FILTERS.vehicle  && r.vehicle?.plateNumber !== FILTERS.vehicle) return false;
     return true;
@@ -331,9 +337,9 @@ function filterRoutes(routes) {
 
 function filterFuel(fuel) {
   return fuel.filter(f => {
-    const d = new Date(f.date);
-    if(FILTERS.dateFrom  && d < new Date(FILTERS.dateFrom)) return false;
-    if(FILTERS.dateTo    && d > new Date(FILTERS.dateTo+'T23:59:59')) return false;
+    const d = f.date.includes('T') ? new Date(f.date) : new Date(f.date+'T12:00:00-03:00');
+    if(FILTERS.dateFrom  && d < new Date(FILTERS.dateFrom+'T00:00:00-03:00')) return false;
+    if(FILTERS.dateTo    && d > new Date(FILTERS.dateTo+'T23:59:59-03:00')) return false;
     if(FILTERS.driver    && String(f.driver?.id) !== FILTERS.driver) return false;
     if(FILTERS.vehicle   && f.vehicle?.plateNumber !== FILTERS.vehicle) return false;
     if(FILTERS.fuelType  && f.type !== FILTERS.fuelType) return false;
