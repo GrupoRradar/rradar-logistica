@@ -394,23 +394,43 @@ function filterByStatus(arr) {
   return arr;
 }
 
-function calcKm(routes) {
+function calcKm(routes, fuel) {
   const byV = {};
+
   routes.forEach(r => {
     const p = r.vehicle?.plateNumber;
-    if(!byV[p]) byV[p]={plate:p,model:r.vehicle?.model||'',brand:r.vehicle?.brand||'',entries:[]};
-    byV[p].entries.push(r);
+    if(!p || !r.km) return;
+    if(!byV[p]) byV[p] = {plate:p, model:r.vehicle?.model||'', brand:r.vehicle?.brand||'', readings:[]};
+    byV[p].readings.push({km:r.km, date:r.date, src:'rota'});
   });
+
+  (fuel||[]).filter(f=>f.type!=='EXCLUIDO' && f.km).forEach(f => {
+    const p = f.vehicle?.plateNumber;
+    if(!p) return;
+    if(!byV[p]) byV[p] = {plate:p, model:f.vehicle?.model||'', brand:'', readings:[]};
+    byV[p].readings.push({km:f.km, date:f.date, src:'abast'});
+  });
+
   return Object.values(byV).map(v => {
-    const s = v.entries.sort((a,b)=>new Date(a.date)-new Date(b.date));
+    const kms = v.readings.map(r=>r.km).filter(k=>k>0);
+    if(!kms.length) return null;
+    const minKm = Math.min(...kms);
+    const maxKm = Math.max(...kms);
+    const sorted = [...v.readings].sort((a,b)=>new Date(a.date)-new Date(b.date));
     return {
-      plate:v.plate, model:v.model, brand:v.brand,
-      traveled: s[s.length-1].km - s[0].km,
-      firstKm:s[0].km, lastKm:s[s.length-1].km,
-      firstDate:s[0].date, lastDate:s[s.length-1].date,
-      stops:s.length
+      plate:     v.plate,
+      model:     v.model,
+      brand:     v.brand,
+      traveled:  maxKm - minKm,
+      firstKm:   minKm,
+      lastKm:    maxKm,
+      firstDate: sorted[0].date,
+      lastDate:  sorted[sorted.length-1].date,
+      stops:     v.readings.length,
+      srcRoute:  v.readings.filter(r=>r.src==='rota').length,
+      srcFuel:   v.readings.filter(r=>r.src==='abast').length,
     };
-  }).sort((a,b)=>b.traveled-a.traveled);
+  }).filter(Boolean).sort((a,b)=>b.traveled-a.traveled);
 }
 
 const hasFilter = () => FILTERS.dateFrom||FILTERS.dateTo||FILTERS.driver||FILTERS.vehicle||FILTERS.fuelType||STATUS!=='all';
@@ -552,7 +572,7 @@ function renderKPIs() {
   const fRoutes = filterRoutes(DATA.routes);
   const fuelOk  = filterFuel(DATA.fuel).filter(f=>f.type!=='EXCLUIDO');
   const totFuel = fuelOk.reduce((s,f)=>s+Number(f.value||0),0);
-  const kmData  = calcKm(fRoutes);
+  const kmData  = calcKm(fRoutes, fuelOk);
   const totKm   = kmData.reduce((s,v)=>s+Math.max(v.traveled,0),0);
   const allEmp  = filterByStatus(DATA.employees);
   const allVeh  = filterByStatus(DATA.vehicles);
@@ -573,7 +593,8 @@ function renderKPIs() {
 
 function renderKmSummary() {
   const fRoutes = filterRoutes(DATA.routes);
-  const kmData  = calcKm(fRoutes);
+  const fuelOkKm = filterFuel(DATA.fuel).filter(f=>f.type!=='EXCLUIDO');
+  const kmData  = calcKm(fRoutes, fuelOkKm);
   if(!kmData.length){ document.getElementById('kmSummary').innerHTML=''; return; }
   document.getElementById('kmSummary').innerHTML = `
     <div class="km-box">
@@ -585,10 +606,10 @@ function renderKmSummary() {
             <div style="font-size:16px;font-weight:700;color:var(--orange);letter-spacing:.08em">${v.plate}</div>
             <div style="font-size:12px;color:var(--text2);margin-top:1px">${v.brand} ${v.model}</div>
             <div style="font-size:22px;font-weight:700;color:${clr};margin-top:8px">${v.traveled>0?'+'+fkm(v.traveled)+' km':'sem variação'}</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px">${v.stops} parada${v.stops!==1?'s':''}</div>
-            <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--text3);border-top:1px solid var(--border);padding-top:7px">
-              <span>Início: <strong style="color:var(--text2)">${fkm(v.firstKm)} km</strong></span>
-              <span>Fim: <strong style="color:var(--text2)">${fkm(v.lastKm)} km</strong></span>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">${v.stops} registro${v.stops!==1?'s':''} <span style="opacity:.6">· ${v.srcRoute} rota${v.srcRoute!==1?'s':''}, ${v.srcFuel} abast.</span></div>
+            <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;border-top:1px solid var(--border);padding-top:7px">
+              <span style="color:var(--text3)">Menor km: <strong style="color:var(--text2)">${fkm(v.firstKm)} km</strong></span>
+              <span style="color:var(--text3)">Maior km: <strong style="color:var(--text2)">${fkm(v.lastKm)} km</strong></span>
             </div>
             <div style="font-size:11px;color:var(--text3);margin-top:4px">${fday(v.firstDate)} → ${fday(v.lastDate)}</div>
           </div>`;
@@ -629,7 +650,7 @@ function renderContent() {
   const vehList=Object.entries(byVeh).sort((a,b)=>b[1]-a[1]);
   const maxD=drvList[0]?.[1]||1, maxV=vehList[0]?.[1]||1;
   const kmByPlate={};
-  calcKm(fRoutes).forEach(v=>{ kmByPlate[v.plate]=v; });
+  calcKm(fRoutes, fuelOk).forEach(v=>{ kmByPlate[v.plate]=v; });
 
   let html = '';
 
