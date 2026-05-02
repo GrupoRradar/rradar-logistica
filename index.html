@@ -232,7 +232,7 @@ let SORT    = {col:null,dir:1};
 const fc   = v => Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fkm  = v => Number(v||0).toLocaleString('pt-BR');
 const fdt  = s => { if(!s) return '–'; return new Date(s).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit',timeZone:'America/Sao_Paulo'}); };
-const fday = s => { if(!s) return '–'; if(s.length===10){ const [y,m,d]=s.split('-'); return d+'/'+m+'/'+y; } return new Date(s).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'}); };
+const fday = s => { if(!s) return '–'; if(s.length===10 || s.includes('T00:00:0')){ const [y,m,d]=s.substring(0,10).split('-'); return d+'/'+m+'/'+y; } return new Date(s).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'}); };
 const ini  = n => (n||'').split(' ').filter((_,i,a)=>i===0||i===a.length-1).map(w=>w[0]).join('').toUpperCase()||'?';
 const dAgo = s => { if(!s) return 999; return Math.floor((Date.now()-new Date(s))/86400000); };
 const FCLR = {'REEMBOLSO':'#FBBF24','VALE OLIVEIRENSE':'#5B9CF6','EXCLUIDO':'#636C82','DIRETO':'#4ADE80'};
@@ -378,7 +378,7 @@ function filterRoutes(routes) {
 
 function filterFuel(fuel) {
   return fuel.filter(f => {
-    const d = f.date.includes('T') ? new Date(f.date) : new Date(f.date+'T12:00:00-03:00');
+    const d = new Date(f.date.substring(0,10)+'T12:00:00-03:00');
     if(FILTERS.dateFrom  && d < new Date(FILTERS.dateFrom+'T00:00:00-03:00')) return false;
     if(FILTERS.dateTo    && d > new Date(FILTERS.dateTo+'T23:59:59-03:00')) return false;
     if(FILTERS.driver    && String(f.driver?.id) !== FILTERS.driver) return false;
